@@ -345,7 +345,6 @@
 					};
 					28F22CCB2F56440300A0FC59 = {
 						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 28F22CBE2F56440300A0FC59;
 					};
 					28F22CD52F56440300A0FC59 = {
 						CreatedOnToolsVersion = 26.2;
@@ -511,13 +510,14 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = OpenClickyWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacContorlAi;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -525,7 +525,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclicky.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolai.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
@@ -550,11 +550,12 @@
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = OpenClickyWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacContorlAi;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -562,7 +563,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclicky.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolai.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
@@ -706,11 +707,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "cursor-buddy/cursor-buddy.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				DRIVERKIT_DEPLOYMENT_TARGET = 25.0;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -720,11 +722,15 @@
 				EXCLUDED_SOURCE_FILE_NAMES = Info.plist;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "cursor-buddy/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = OpenClicky;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mac-Control-AI";
 				INFOPLIST_KEY_CFBundleName = OpenClicky;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "OpenClicky uses Apple Events only when you ask it to automate local apps or System Events for guarded macOS control.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "OpenClicky uses the selected camera only when you enable visual intelligence or meeting notes, so it can understand camera images and visible text.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Jason Kneen. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClicky uses the microphone for push-to-talk voice input, optional “Hey Clicky” wake-word listening, and optional meeting notes transcription.";
 				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "OpenClicky needs screen recording access to see your screen and help you.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClicky uses on-device speech recognition to detect the optional “Hey Clicky” wake phrase when hands-free listening is enabled.";
 				INFOPLIST_KEY_NSUserNotificationAlertStyle = alert;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -733,9 +739,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclicky;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolai;
 				PRODUCT_MODULE_NAME = OpenClicky;
-				PRODUCT_NAME = OpenClicky;
+				PRODUCT_NAME = "Mac Control AI";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -752,11 +758,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "cursor-buddy/cursor-buddy.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				DRIVERKIT_DEPLOYMENT_TARGET = 25.0;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -766,11 +773,15 @@
 				EXCLUDED_SOURCE_FILE_NAMES = Info.plist;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "cursor-buddy/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = OpenClicky;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mac-Control-AI";
 				INFOPLIST_KEY_CFBundleName = OpenClicky;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "OpenClicky uses Apple Events only when you ask it to automate local apps or System Events for guarded macOS control.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "OpenClicky uses the selected camera only when you enable visual intelligence or meeting notes, so it can understand camera images and visible text.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Jason Kneen. All rights reserved.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "OpenClicky uses the microphone for push-to-talk voice input, optional “Hey Clicky” wake-word listening, and optional meeting notes transcription.";
 				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "OpenClicky needs screen recording access to see your screen and help you.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "OpenClicky uses on-device speech recognition to detect the optional “Hey Clicky” wake phrase when hands-free listening is enabled.";
 				INFOPLIST_KEY_NSUserNotificationAlertStyle = alert;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -779,9 +790,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclicky;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolai;
 				PRODUCT_MODULE_NAME = OpenClicky;
-				PRODUCT_NAME = OpenClicky;
+				PRODUCT_NAME = "Mac Control AI";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -795,44 +806,40 @@
 		28F22CE42F56440300A0FC59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclickyTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolaiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenClicky.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OpenClicky";
 			};
 			name = Debug;
 		};
 		28F22CE52F56440300A0FC59 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclickyTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolaiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenClicky.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OpenClicky";
 			};
 			name = Release;
 		};
@@ -842,11 +849,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclickyUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolaiUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -863,11 +870,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = SW75ZJJ5R6;
+				DEVELOPMENT_TEAM = QP3S2USKMC;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jkneen.openclickyUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cloudjo.maccontrolaiUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

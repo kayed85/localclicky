@@ -167,7 +167,7 @@ The imported context was normalized for OpenClicky's macOS runtime where the sou
 ## Migration Rules
 
 - Preserve user-facing product name `OpenClicky`.
-- Preserve bundle identifier `com.jkneen.openclicky`.
+- Preserve bundle identifier `com.cloudjo.maccontrolai`.
 - Preserve legacy `cursor-buddy` folder and scheme names.
 - Keep `OpenClickyBundledSkills/_shared/OpenClickySkillCompatibilityPolicy.md` as the policy layer for bundled skill behavior.
 - Keep CUA/computer-use routes distinct: native Swift CUA, foreground `NSWorkspace` opens, Background Computer Use, and external-control bridge are separate paths.

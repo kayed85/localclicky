@@ -68,7 +68,7 @@ nonisolated enum AppBundleConfiguration {
     /// When true (default), sample only while the primary mouse button is dragged during PTT hold.
     /// When false, any mouse movement while holding the key draws.
     static let userCircleWhileTalkingRequireClickDefaultsKey = "openClickyCircleWhileTalkingRequireClick"
-    static let appGroupIdentifier = "group.com.jkneen.openclicky"
+    static let appGroupIdentifier = "group.com.cloudjo.maccontrolai"
 
     static func registerDefaults() {
         UserDefaults.standard.register(defaults: [
@@ -424,7 +424,7 @@ nonisolated enum AppBundleConfiguration {
         return nil
     }
 
-    private static let keychainService = "com.jkneen.openclicky.secrets"
+    private static let keychainService = "com.cloudjo.maccontrolai.secrets"
 
     private static let keychainBackedDefaultsKeys: Set<String> = [
         userAnthropicAPIKeyDefaultsKey,

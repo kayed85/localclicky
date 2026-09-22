@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "28F22CBE2F56440300A0FC59"
-               BuildableName = "OpenClicky.app"
+               BuildableName = "Mac Control AI.app"
                BlueprintName = "cursor-buddy"
                ReferencedContainer = "container:cursor-buddy.xcodeproj">
             </BuildableReference>
@@ -76,7 +76,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "28F22CBE2F56440300A0FC59"
-            BuildableName = "OpenClicky.app"
+            BuildableName = "Mac Control AI.app"
             BlueprintName = "cursor-buddy"
             ReferencedContainer = "container:cursor-buddy.xcodeproj">
          </BuildableReference>
@@ -93,7 +93,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "28F22CBE2F56440300A0FC59"
-            BuildableName = "OpenClicky.app"
+            BuildableName = "Mac Control AI.app"
             BlueprintName = "cursor-buddy"
             ReferencedContainer = "container:cursor-buddy.xcodeproj">
          </BuildableReference>

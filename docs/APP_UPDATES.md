@@ -93,7 +93,7 @@ Use this to prove the update loop before publishing to GitHub Releases. Build th
 Point that installed build at a local appcast:
 
 ```sh
-defaults write com.jkneen.openclicky OpenClickySparkleFeedURLOverride -string "http://127.0.0.1:8808/appcast.xml"
+defaults write com.cloudjo.maccontrolai OpenClickySparkleFeedURLOverride -string "http://127.0.0.1:8808/appcast.xml"
 ```
 
 The override only accepts `https`, `file`, or local `http` feeds. Non-local `http` is ignored. When this override is present, OpenClicky triggers a Sparkle background check immediately on launch.
@@ -154,5 +154,5 @@ python3 -m http.server 8808 --bind 127.0.0.1
 Clear the local feed override after testing:
 
 ```sh
-defaults delete com.jkneen.openclicky OpenClickySparkleFeedURLOverride
+defaults delete com.cloudjo.maccontrolai OpenClickySparkleFeedURLOverride
 ```

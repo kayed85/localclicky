@@ -35,7 +35,7 @@ struct AgentConfig: Codable, Equatable {
 final class OpenClickyAgentManager: ObservableObject {
     static let shared = OpenClickyAgentManager()
 
-    private let logger = Logger(subsystem: "com.jkneen.openclicky", category: "AgentRuntime")
+    private let logger = Logger(subsystem: "com.cloudjo.maccontrolai", category: "AgentRuntime")
     nonisolated private static let streamReadIdleTimeout: TimeInterval = 90
     nonisolated private static let firstTokenTimeout: TimeInterval = 20
 
@@ -55,7 +55,7 @@ final class OpenClickyAgentManager: ObservableObject {
     var launchAgentPlistPath: URL {
         let launchAgents = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/LaunchAgents", isDirectory: true)
-        return launchAgents.appendingPathComponent("com.jkneen.openclicky.agent.plist")
+        return launchAgents.appendingPathComponent("com.cloudjo.maccontrolai.agent.plist")
     }
 
     var configPath: URL {
@@ -186,7 +186,7 @@ final class OpenClickyAgentManager: ObservableObject {
     /// detached ensureRunning/restartService paths. Lives off the main actor so
     /// the launchctl `waitUntilExit()` and file writes never block the UI.
     nonisolated static func performInstall(binaryPath: String, plistPath: String, supportDir: URL) throws {
-        let installLog = Logger(subsystem: "com.jkneen.openclicky", category: "AgentRuntime")
+        let installLog = Logger(subsystem: "com.cloudjo.maccontrolai", category: "AgentRuntime")
         let binaryURL = URL(fileURLWithPath: binaryPath, isDirectory: false)
         guard isPermittedLaunchBinary(binaryURL) else {
             throw NSError(
@@ -197,7 +197,7 @@ final class OpenClickyAgentManager: ObservableObject {
         }
         installLog.info("performInstall: writing plist to \(plistPath, privacy: .public)")
         let plist: [String: Any] = [
-            "Label": "com.jkneen.openclicky.agent",
+            "Label": "com.cloudjo.maccontrolai.agent",
             "ProgramArguments": [binaryURL.path, "run"],
             "RunAtLoad": true,
             "KeepAlive": true,
@@ -217,7 +217,7 @@ final class OpenClickyAgentManager: ObservableObject {
         // A launchd job keeps the old ProgramArguments in memory after its
         // plist is overwritten. Unload it before writing so an explicit
         // install cannot accidentally preserve a stale executable.
-        _ = try? runLaunchctlStatic(["bootout", "gui/\(getuid())/com.jkneen.openclicky.agent"])
+        _ = try? runLaunchctlStatic(["bootout", "gui/\(getuid())/com.cloudjo.maccontrolai.agent"])
         _ = try? runLaunchctlStatic(["unload", plistPath])
         try FileManager.default.createDirectory(at: supportDir, withIntermediateDirectories: true)
         try FileManager.default.createDirectory(at: supportDir.appendingPathComponent("logs"), withIntermediateDirectories: true)
@@ -259,7 +259,7 @@ final class OpenClickyAgentManager: ObservableObject {
         guard let data = try? Data(contentsOf: plistURL),
               let propertyList = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil),
               let plist = propertyList as? [String: Any],
-              plist["Label"] as? String == "com.jkneen.openclicky.agent",
+              plist["Label"] as? String == "com.cloudjo.maccontrolai.agent",
               let arguments = plist["ProgramArguments"] as? [String],
               arguments.count == 2,
               arguments[1] == "run" else {
@@ -276,7 +276,7 @@ final class OpenClickyAgentManager: ObservableObject {
     }
 
     nonisolated private static func unloadAndRemoveLaunchAgent(plistPath: String) {
-        _ = try? runLaunchctlStatic(["bootout", "gui/\(getuid())/com.jkneen.openclicky.agent"])
+        _ = try? runLaunchctlStatic(["bootout", "gui/\(getuid())/com.cloudjo.maccontrolai.agent"])
         _ = try? runLaunchctlStatic(["unload", plistPath])
         try? FileManager.default.removeItem(atPath: plistPath)
     }
@@ -306,7 +306,7 @@ final class OpenClickyAgentManager: ObservableObject {
 
                 let process = Process()
                 process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
-                process.arguments = ["list", "com.jkneen.openclicky.agent"]
+                process.arguments = ["list", "com.cloudjo.maccontrolai.agent"]
 
                 let pipe = Pipe()
                 process.standardOutput = pipe
@@ -726,8 +726,8 @@ final class OpenClickyAgentManager: ObservableObject {
 
             if plistMatchesExpectedBinary {
                 report("Kickstarting openclicky-agent via launchctl")
-                let kickstart = (try? Self.runLaunchctlStatic(["kickstart", "-k", "gui/\(getuid())/com.jkneen.openclicky.agent"])) ?? -1
-                let startCmd = (try? Self.runLaunchctlStatic(["start", "com.jkneen.openclicky.agent"])) ?? -1
+                let kickstart = (try? Self.runLaunchctlStatic(["kickstart", "-k", "gui/\(getuid())/com.cloudjo.maccontrolai.agent"])) ?? -1
+                let startCmd = (try? Self.runLaunchctlStatic(["start", "com.cloudjo.maccontrolai.agent"])) ?? -1
                 log.info("ensureRunning.work: launchctl kickstart=\(kickstart, privacy: .public) start=\(startCmd, privacy: .public)")
                 if Self.waitForRunningSocketStatic(path: socketPath, timeout: 2.0) {
                     log.info("ensureRunning.work: socket live after kickstart")
@@ -811,7 +811,7 @@ final class OpenClickyAgentManager: ObservableObject {
         let socketPath = ipcSocketPath
 
         await Task.detached(priority: .userInitiated) {
-            _ = try? Self.runLaunchctlStatic(["bootout", "gui/\(getuid())/com.jkneen.openclicky.agent"])
+            _ = try? Self.runLaunchctlStatic(["bootout", "gui/\(getuid())/com.cloudjo.maccontrolai.agent"])
             _ = try? Self.runLaunchctlStatic(["unload", plistPath])
             Self.terminateAgentProcesses(modes: ["run"])
             try? FileManager.default.removeItem(atPath: socketPath)
