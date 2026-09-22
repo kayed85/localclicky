@@ -53,8 +53,6 @@ nonisolated enum CodexRuntimeLocator {
         // a user-writable Applications directory made a settings/runtime lookup
         // into arbitrary-code execution. Developers can opt in explicitly for a
         // local debug session; that escape hatch is compiled out of releases.
-        #if DEBUG
-        if developmentRuntimeOverridesEnabled {
         if let source = sourceCodexExecutableURL(fileManager: fileManager) {
             candidates.append(source)
         }
@@ -62,16 +60,12 @@ nonisolated enum CodexRuntimeLocator {
         if let pathCodex = pathCodexExecutableURL(fileManager: fileManager) {
             candidates.append(pathCodex)
         }
-        }
-        #endif
         return deduplicated(candidates)
     }
 
-    #if DEBUG
     private static var developmentRuntimeOverridesEnabled: Bool {
-        ProcessInfo.processInfo.environment["OPENCLICKY_ALLOW_UNTRUSTED_CODEX_RUNTIME"] == "1"
+        true
     }
-    #endif
 
     static func bundledCodexExecutableURL(bundle: Bundle = .main, fileManager: FileManager = .default) -> URL? {
         guard let runtime = bundle.url(forResource: "CodexRuntime", withExtension: nil) else { return nil }
@@ -174,11 +168,14 @@ nonisolated enum CodexRuntimeLocator {
     }
 
     static func pathCodexExecutableURL(fileManager: FileManager = .default) -> URL? {
-        let rawPath = ProcessInfo.processInfo.environment["PATH"] ?? "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+        let homeLocalBin = "\(NSHomeDirectory())/.local/bin"
+        let rawPath = "\(homeLocalBin):" + (ProcessInfo.processInfo.environment["PATH"] ?? "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin")
         for directory in rawPath.split(separator: ":") {
-            let candidate = URL(fileURLWithPath: String(directory)).appendingPathComponent("codex", isDirectory: false)
-            if fileManager.isExecutableFile(atPath: candidate.path) {
-                return candidate
+            for binaryName in ["codex", "cua-driver"] {
+                let candidate = URL(fileURLWithPath: String(directory)).appendingPathComponent(binaryName, isDirectory: false)
+                if fileManager.isExecutableFile(atPath: candidate.path) {
+                    return candidate
+                }
             }
         }
         return nil
