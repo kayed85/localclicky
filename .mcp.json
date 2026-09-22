@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "cua-driver": {
+      "command": "cua-driver",
+      "args": ["mcp"]
+    },
     "contex": {
       "type": "http",
       "url": "http://127.0.0.1:58217/mcp"
