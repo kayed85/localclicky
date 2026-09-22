@@ -231,7 +231,7 @@ final class CodexPointDetector {
     }
 
     #if DEBUG
-    static func testCodexExecArguments(model: String = "gpt-5.6-sol") -> [String] {
+    static func testCodexExecArguments(model: String = "gpt-4o") -> [String] {
         let directory = URL(fileURLWithPath: "/tmp/OpenClickyCodexPointDetectorTest", isDirectory: true)
         return codexExecArguments(
             model: model,

@@ -115,7 +115,7 @@ struct CodexAgentModeTests {
 
     @Test func codexConfigRendersExistingCuaDriverMCPServerWhenAvailable() throws {
         let template = ClickyCodexConfigTemplate(
-            model: "gpt-5.6-sol",
+            model: "gpt-4o",
             reasoningEffort: "medium",
             workerBaseURL: URL(string: "https://api.openai.com/v1")!,
             includeOpenAIDeveloperDocsMCP: false,
@@ -135,7 +135,7 @@ struct CodexAgentModeTests {
 
     @Test func codexConfigOmitsCuaDriverMCPServerWhenUnavailable() throws {
         let template = ClickyCodexConfigTemplate(
-            model: "gpt-5.6-sol",
+            model: "gpt-4o",
             reasoningEffort: "medium",
             workerBaseURL: URL(string: "https://api.openai.com/v1")!,
             includeOpenAIDeveloperDocsMCP: false,
@@ -150,7 +150,7 @@ struct CodexAgentModeTests {
 
     @Test func codexConfigCanDisableComposioConnectMCPServer() throws {
         let template = ClickyCodexConfigTemplate(
-            model: "gpt-5.6-sol",
+            model: "gpt-4o",
             reasoningEffort: "medium",
             workerBaseURL: URL(string: "https://api.openai.com/v1")!,
             includeOpenAIDeveloperDocsMCP: false,
@@ -165,7 +165,7 @@ struct CodexAgentModeTests {
 
     @Test func codexConfigCanEnableComposioConnectMCPServer() throws {
         let template = ClickyCodexConfigTemplate(
-            model: "gpt-5.6-sol",
+            model: "gpt-4o",
             reasoningEffort: "medium",
             workerBaseURL: URL(string: "https://api.openai.com/v1")!,
             includeOpenAIDeveloperDocsMCP: false,
@@ -180,7 +180,7 @@ struct CodexAgentModeTests {
 
     @Test func codexConfigCanEnableOpenClickyControlMCPServer() throws {
         let template = ClickyCodexConfigTemplate(
-            model: "gpt-5.6-sol",
+            model: "gpt-4o",
             reasoningEffort: "medium",
             workerBaseURL: URL(string: "https://api.openai.com/v1")!,
             includeOpenAIDeveloperDocsMCP: false,
@@ -255,11 +255,11 @@ struct CodexAgentModeTests {
     }
 
     @Test func codexRPCErrorMessageUnwrapsNestedJSONErrorPayload() throws {
-        let rawPayload = #"{"type":"error","status":400,"error":{"type":"invalid_request_error","message":"The 'gpt-5.6-sol' model requires a newer version of Codex. Please upgrade to the latest app or CLI and try again."}}"#
+        let rawPayload = #"{"type":"error","status":400,"error":{"type":"invalid_request_error","message":"The 'gpt-4o' model requires a newer version of Codex. Please upgrade to the latest app or CLI and try again."}}"#
 
         let message = try #require(CodexRPCErrorMessage.readableMessage(from: rawPayload))
 
-        #expect(message == "The 'gpt-5.6-sol' model requires a newer version of Codex. Please upgrade to the latest app or CLI and try again.")
+        #expect(message == "The 'gpt-4o' model requires a newer version of Codex. Please upgrade to the latest app or CLI and try again.")
         #expect(CodexAgentSession.shouldRetryWithCompatibilityFallback(message))
     }
 

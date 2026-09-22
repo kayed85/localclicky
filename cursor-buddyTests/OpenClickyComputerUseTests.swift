@@ -292,15 +292,15 @@ struct OpenClickyComputerUseTests {
     }
 
     @Test func nonSpeechModelsRemainSelectedForVoiceAnalysis() throws {
-        #expect(OpenClickyModelCatalog.voiceAnalysisModel(withID: "gpt-5.6-sol").id == "gpt-5.6-sol")
-        #expect(OpenClickyModelCatalog.codexVoiceSessionModel(withID: "gpt-5.6-sol").id == "gpt-5.6-sol")
+        #expect(OpenClickyModelCatalog.voiceAnalysisModel(withID: "gpt-4o").id == "gpt-4o")
+        #expect(OpenClickyModelCatalog.codexVoiceSessionModel(withID: "gpt-4o").id == "gpt-4o")
     }
 
     @Test func realtimeVoiceUsesRealtimeForComputerUsePointing() throws {
         #expect(
             CompanionManager.testComputerUsePointingResolver(
                 selectedVoiceModelID: "gpt-realtime-2.1-mini",
-                selectedComputerUseModelID: "gpt-5.6-sol"
+                selectedComputerUseModelID: "gpt-4o"
             ) == "openai_realtime"
         )
     }
@@ -310,7 +310,7 @@ struct OpenClickyComputerUseTests {
         #expect(model.provider == .openAI)
         #expect(
             CompanionManager.testComputerUsePointingResolver(
-                selectedVoiceModelID: "gpt-5.6-sol",
+                selectedVoiceModelID: "gpt-4o",
                 selectedComputerUseModelID: "gpt-realtime-2.1-mini"
             ) == "openai_realtime"
         )
@@ -319,14 +319,14 @@ struct OpenClickyComputerUseTests {
     @Test func nonRealtimeVoiceKeepsSelectedComputerUsePointingResolver() throws {
         #expect(
             CompanionManager.testComputerUsePointingResolver(
-                selectedVoiceModelID: "gpt-5.6-sol",
-                selectedComputerUseModelID: "gpt-5.6-sol"
+                selectedVoiceModelID: "gpt-4o",
+                selectedComputerUseModelID: "gpt-4o"
             ) == "codex_cli"
         )
         #expect(
             CompanionManager.testComputerUsePointingResolver(
                 selectedVoiceModelID: "fable-5",
-                selectedComputerUseModelID: "gpt-5.6-sol"
+                selectedComputerUseModelID: "gpt-4o"
             ) == "codex_cli"
         )
         #expect(
