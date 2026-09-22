@@ -41,7 +41,7 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/jasonkneen/openclicky/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/kayed85/Mac-Control-AI/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>fXYcC2zX+zTEH0DVS8io8agfHtphoB9/o6J33T9FLdk=</string>
 	<key>SUScheduledCheckInterval</key>
