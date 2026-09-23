@@ -1692,6 +1692,8 @@ final class CompanionManager: ObservableObject {
     @Published var selectedComputerUseModel: String = OpenClickyModelCatalog.computerUseModel(
         withID: UserDefaults.standard.string(forKey: "selectedComputerUseModel") ?? OpenClickyModelCatalog.defaultComputerUseModelID
     ).id
+    @Published var selectedCodeModel: String = UserDefaults.standard.string(forKey: "selectedCodeModel") ?? "gemma"
+    @Published var selectedVisionModel: String = UserDefaults.standard.string(forKey: "selectedVisionModel") ?? "gemma"
     @Published var selectedComputerUseBackendID: String = OpenClickyComputerUseBackendID.resolving(
         UserDefaults.standard.string(forKey: AppBundleConfiguration.userComputerUseBackendDefaultsKey)
     ).rawValue
@@ -1857,6 +1859,16 @@ final class CompanionManager: ObservableObject {
         let resolvedModel = OpenClickyModelCatalog.computerUseModel(withID: model).id
         selectedComputerUseModel = resolvedModel
         UserDefaults.standard.set(resolvedModel, forKey: "selectedComputerUseModel")
+    }
+
+    func setSelectedCodeModel(_ model: String) {
+        selectedCodeModel = model
+        UserDefaults.standard.set(model, forKey: "selectedCodeModel")
+    }
+
+    func setSelectedVisionModel(_ model: String) {
+        selectedVisionModel = model
+        UserDefaults.standard.set(model, forKey: "selectedVisionModel")
     }
 
     var selectedComputerUseBackend: OpenClickyComputerUseBackendID {

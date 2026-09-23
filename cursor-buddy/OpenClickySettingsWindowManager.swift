@@ -570,6 +570,20 @@ struct OpenClickySettingsView: View {
                     )
                 }
 
+            settingsGroup("App Updates (تحديثات التطبيق من الريبو)") {
+                valueRow(
+                    title: "GitHub Repository",
+                    subtitle: "https://github.com/kayed85/Mac-Control-AI.git",
+                    systemImageName: "arrow.triangle.pull"
+                )
+
+                actionRow(title: "Check for Updates from GitHub (البحث عن تحديث جديد)", systemImageName: "arrow.clockwise") {
+                    if let appDelegate = NSApp.delegate as? CompanionAppDelegate {
+                        appDelegate.checkForUpdates()
+                    }
+                }
+            }
+
                 editableFieldRow(
                     title: "OpenClicky volume",
                     subtitle: "Controls spoken reply playback without changing macOS system volume.",
@@ -1031,51 +1045,89 @@ struct OpenClickySettingsView: View {
         VStack(alignment: .leading, spacing: 14) {
             voiceRouteOverview
 
-            settingsGroup("Response voice model") {
-                Text("Pick Realtime when one model should listen and speak live, or use a normal model when OpenClicky should think first and hand the reply to a playback engine.")
+            settingsGroup("Task-Based AI Models (تخصيص النماذج حسب المهمة)") {
+                Text("Select dedicated AI models for each type of task in Mac Control AI.")
                     .font(appUIFont(size: subtextFontSize, weight: .regular))
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                modelOptionGrid(
-                    options: OpenClickyModelCatalog.responseVoiceModels,
-                    selectedModelID: companionManager.selectedModel,
-                    columns: 3,
-                    select: { companionManager.setSelectedModel($0) }
-                )
-
-                if selectedVoiceModelOption.provider == .openAI,
-                   isRealtimeVoiceRoute {
-                    openAIRealtimeVoicePicker
-                }
-
-                if isDeepgramVoiceAgentRoute {
-                    Text("Deepgram Voice Agent uses one WebSocket for listening, thinking, and speaking; it reuses the Deepgram key configured in Advanced Providers.")
-                        .font(appUIFont(size: subtextFontSize, weight: .regular))
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    textFieldRow(
-                        title: "Deepgram voice",
-                        subtitle: "Aura model identifier for the speak stage.",
-                        systemImageName: "person.wave.2",
-                        placeholder: "aura-2-thalia-en",
-                        text: Binding(
-                            get: { userDeepgramTTSVoice },
-                            set: { userDeepgramTTSVoice = $0; companionManager.setDeepgramTTSVoice($0) }
+                VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("💬 Chat & Voice Model (المحادثة والحكي العادي):")
+                            .font(appUIFont(size: subtextFontSize, weight: .semibold))
+                        modelOptionGrid(
+                            options: OpenClickyModelCatalog.responseVoiceModels,
+                            selectedModelID: companionManager.selectedModel,
+                            columns: 3,
+                            select: { companionManager.setSelectedModel($0) }
                         )
-                    )
-                    textFieldRow(
-                        title: "Deepgram think model",
-                        subtitle: "LLM model Deepgram should use inside the Voice Agent.",
-                        systemImageName: "brain.head.profile",
-                        placeholder: "gpt-4o-mini",
-                        text: Binding(
-                            get: { userDeepgramVoiceAgentThinkModel },
-                            set: { userDeepgramVoiceAgentThinkModel = $0; companionManager.setDeepgramVoiceAgentThinkModel($0) }
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("💻 Code & Agent Tasks (البرمجة وكتابة الكود):")
+                            .font(appUIFont(size: subtextFontSize, weight: .semibold))
+                        modelOptionGrid(
+                            options: OpenClickyModelCatalog.codexActionsModels,
+                            selectedModelID: companionManager.selectedCodeModel,
+                            columns: 3,
+                            select: { companionManager.setSelectedCodeModel($0) }
                         )
-                    )
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("🖱️ Mac Control & CUA (التحكم بالمؤشر والجهاز):")
+                            .font(appUIFont(size: subtextFontSize, weight: .semibold))
+                        modelOptionGrid(
+                            options: OpenClickyModelCatalog.computerUseModels,
+                            selectedModelID: companionManager.selectedComputerUseModel,
+                            columns: 3,
+                            select: { companionManager.setSelectedComputerUseModel($0) }
+                        )
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("👁️ Vision & Image Analysis (تحليل الصور والشاشة):")
+                            .font(appUIFont(size: subtextFontSize, weight: .semibold))
+                        modelOptionGrid(
+                            options: OpenClickyModelCatalog.responseVoiceModels,
+                            selectedModelID: companionManager.selectedVisionModel,
+                            columns: 3,
+                            select: { companionManager.setSelectedVisionModel($0) }
+                        )
+                    }
                 }
-            }
+                    if selectedVoiceModelOption.provider == .openAI,
+                       isRealtimeVoiceRoute {
+                        openAIRealtimeVoicePicker
+                    }
+
+                    if isDeepgramVoiceAgentRoute {
+                        Text("Deepgram Voice Agent uses one WebSocket for listening, thinking, and speaking; it reuses the Deepgram key configured in Advanced Providers.")
+                            .font(appUIFont(size: subtextFontSize, weight: .regular))
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        textFieldRow(
+                            title: "Deepgram voice",
+                            subtitle: "Aura model identifier for the speak stage.",
+                            systemImageName: "person.wave.2",
+                            placeholder: "aura-2-thalia-en",
+                            text: Binding(
+                                get: { userDeepgramTTSVoice },
+                                set: { userDeepgramTTSVoice = $0; companionManager.setDeepgramTTSVoice($0) }
+                            )
+                        )
+                        textFieldRow(
+                            title: "Deepgram think model",
+                            subtitle: "LLM model Deepgram should use inside the Voice Agent.",
+                            systemImageName: "brain.head.profile",
+                            placeholder: "gpt-4o-mini",
+                            text: Binding(
+                                get: { userDeepgramVoiceAgentThinkModel },
+                                set: { userDeepgramVoiceAgentThinkModel = $0; companionManager.setDeepgramVoiceAgentThinkModel($0) }
+                            )
+                        )
+                    }
+                }
 
             if shouldShowTranscriptionProviderControls {
                 settingsGroup(isLocalVoiceRoute ? "Local listening" : "Listening provider") {
