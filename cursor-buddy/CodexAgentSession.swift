@@ -435,7 +435,7 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         lastSubmittedPrompt
     }
     private var currentLeasePaths: [String] = []
-    private static let codexRuntimeCompatibilityFallbackModel = "gpt-5.6-luna"
+    private static let codexRuntimeCompatibilityFallbackModel = "gemma"
     private static let assistantDeltaFlushDelayNanoseconds: UInt64 = 180_000_000
 
     init(
@@ -1196,6 +1196,8 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
             .lowercased()
         return foldedMessage.contains("requires a newer version of codex")
             || foldedMessage.contains("please upgrade to the latest app or cli")
+            || foldedMessage.contains("is not supported when using codex")
+            || foldedMessage.contains("not supported when using codex")
     }
 
     private func handleStartedItem(_ itemValue: Any?) {
