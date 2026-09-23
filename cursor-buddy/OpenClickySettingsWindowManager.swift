@@ -362,6 +362,7 @@ struct OpenClickySettingsView: View {
             }
         }
         .onAppear {
+            companionManager.refreshAllPermissions()
             refreshNotificationAuthorizationStatus()
             loadConfiguredSecretsForEditing()
         }
@@ -675,6 +676,10 @@ struct OpenClickySettingsView: View {
                     isGranted: companionManager.hasMicrophonePermission,
                     settingsURL: URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")!
                 )
+
+                actionRow(title: "Refresh permission status (إعادة فحص الصلاحيات الآن)", systemImageName: "arrow.clockwise.circle") {
+                    companionManager.refreshAllPermissions()
+                }
             }
 
             settingsGroup("Companion") {
