@@ -24,7 +24,7 @@ class WindowPositionManager {
 
     private static var hasAttemptedAccessibilitySystemPromptDuringCurrentLaunch = false
     private static var hasAttemptedScreenRecordingSystemPromptDuringCurrentLaunch = false
-    private static let hasPreviouslyConfirmedScreenRecordingPermissionUserDefaultsKey = "com.learningbuddy.hasPreviouslyConfirmedScreenRecordingPermission"
+    static let hasPreviouslyConfirmedScreenRecordingPermissionUserDefaultsKey = "com.learningbuddy.hasPreviouslyConfirmedScreenRecordingPermission"
 
     /// Returns true when the Mac currently has more than one connected display.
     /// Uses AppKit's screen list, which is available without ScreenCaptureKit's
@@ -37,7 +37,12 @@ class WindowPositionManager {
 
     /// Returns true if the app has Accessibility permission.
     static func hasAccessibilityPermission() -> Bool {
-        AXIsProcessTrusted()
+        let grantedNow = AXIsProcessTrusted()
+        if grantedNow {
+            UserDefaults.standard.set(true, forKey: "hasPreviouslyConfirmedAccessibilityPermission")
+            return true
+        }
+        return UserDefaults.standard.bool(forKey: "hasPreviouslyConfirmedAccessibilityPermission")
     }
 
     /// Presents exactly one permission path per tap: the system prompt on the first
@@ -110,8 +115,9 @@ class WindowPositionManager {
         let hasScreenRecordingPermissionNow = CGPreflightScreenCaptureAccess()
         if hasScreenRecordingPermissionNow {
             UserDefaults.standard.set(true, forKey: hasPreviouslyConfirmedScreenRecordingPermissionUserDefaultsKey)
+            return true
         }
-        return hasScreenRecordingPermissionNow
+        return UserDefaults.standard.bool(forKey: hasPreviouslyConfirmedScreenRecordingPermissionUserDefaultsKey)
     }
 
     /// Returns true when the app should proceed with session launch without showing

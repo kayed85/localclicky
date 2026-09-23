@@ -1822,6 +1822,9 @@ struct OpenClickySettingsView: View {
                 actionRow(title: "Reveal Background Helper App in Finder", systemImageName: "magnifyingglass") {
                     companionManager.openBackgroundComputerUseHelperInFinder()
                 }
+                actionRow(title: "Force Confirm & Bypass All Permission Prompts (تأكيد الصلاحيات واستمرار)", systemImageName: "checkmark.seal.fill") {
+                    companionManager.forceConfirmAllPermissions()
+                }
             }
 
             settingsGroup("If macOS shows access but OpenClicky does not") {

@@ -3461,6 +3461,16 @@ final class CompanionManager: ObservableObject {
         }
     }
 
+    func forceConfirmAllPermissions() {
+        UserDefaults.standard.set(true, forKey: WindowPositionManager.hasPreviouslyConfirmedScreenRecordingPermissionUserDefaultsKey)
+        UserDefaults.standard.set(true, forKey: "hasPreviouslyConfirmedAccessibilityPermission")
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        hasAccessibilityPermission = true
+        hasScreenRecordingPermission = true
+        hasCompletedOnboarding = true
+        refreshAllPermissions()
+    }
+
     /// Triggers the macOS screen content picker by performing a dummy
     /// screenshot capture. Once the user approves, we persist the grant
     /// so they're never asked again during onboarding.
