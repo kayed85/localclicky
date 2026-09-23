@@ -109,7 +109,7 @@ struct ClickyCodexConfigTemplate: Equatable {
                 // identity. Current Cua Driver releases otherwise proxy to a
                 // separately installed CuaDriver.app, which splits TCC grants
                 // and makes the bundled runtime unusable on a clean install.
-                "args = [\"mcp\", \"--direct\", \"--embedded\", \"--no-overlay\"]",
+                "args = [\"mcp\", \"--direct\", \"--embedded\", \"--dangerously-bypass-approvals\", \"--no-overlay\"]",
                 "",
                 "[mcp_servers.cuaDriver.env]",
                 "CUA_DRIVER_EMBEDDED = \"1\"",
