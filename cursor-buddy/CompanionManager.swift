@@ -1884,7 +1884,7 @@ final class CompanionManager: ObservableObject {
             // Ultra-performance profile for 16GB+ Macs
             setSelectedModel("gemma")
             setSelectedCodeModel("gemma")
-            setSelectedComputerUseModel("gpt-4o")
+            setSelectedComputerUseModel("gemma")
             setSelectedVisionModel("gemma")
         }
     }
