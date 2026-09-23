@@ -1871,6 +1871,24 @@ final class CompanionManager: ObservableObject {
         UserDefaults.standard.set(model, forKey: "selectedVisionModel")
     }
 
+    /// Automatically selects the best local models based on the Mac's hardware specifications (RAM / chip tier).
+    func configureOptimalLocalModels() {
+        let memoryInGB = Double(ProcessInfo.processInfo.physicalMemory) / (1024.0 * 1024.0 * 1024.0)
+        if memoryInGB < 16.0 {
+            // Fast & lightweight profile for 8GB-12GB Macs
+            setSelectedModel(OpenClickyModelCatalog.appleFoundationModelID)
+            setSelectedCodeModel("gemma")
+            setSelectedComputerUseModel(OpenClickyModelCatalog.defaultComputerUseModelID)
+            setSelectedVisionModel("gemma")
+        } else {
+            // Ultra-performance profile for 16GB+ Macs
+            setSelectedModel("gemma")
+            setSelectedCodeModel("gemma")
+            setSelectedComputerUseModel("gpt-4o")
+            setSelectedVisionModel("gemma")
+        }
+    }
+
     var selectedComputerUseBackend: OpenClickyComputerUseBackendID {
         OpenClickyComputerUseBackendID.resolving(selectedComputerUseBackendID)
     }
