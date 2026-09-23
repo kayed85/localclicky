@@ -37,6 +37,9 @@ enum CompanionScreenCaptureUtility {
     private static let shareableContentCacheLifetime: TimeInterval = 3.0
 
     static func currentShareableContent() async throws -> SCShareableContent {
+        guard WindowPositionManager.shouldTreatScreenRecordingPermissionAsGrantedForSessionLaunch() else {
+            throw NSError(domain: "OpenClickyScreenCapture", code: 1, userInfo: [NSLocalizedDescriptionKey: "Screen Recording permission not granted"])
+        }
         if let cached = cachedShareableContent,
            let expiresAt = cachedShareableContentExpiresAt,
            expiresAt > Date() {
@@ -52,6 +55,7 @@ enum CompanionScreenCaptureUtility {
     /// skips the cold enumeration. Safe to call repeatedly — it just
     /// refreshes the cache.
     static func prewarmShareableContent() {
+        guard WindowPositionManager.shouldTreatScreenRecordingPermissionAsGrantedForSessionLaunch() else { return }
         Task { @MainActor in
             _ = try? await currentShareableContent()
         }

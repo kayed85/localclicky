@@ -43,6 +43,12 @@ final class OpenClickySystemAudioCaptureController: NSObject, SCStreamOutput, SC
         }
         notifyStateChanged()
 
+        guard WindowPositionManager.shouldTreatScreenRecordingPermissionAsGrantedForSessionLaunch() else {
+            throw NSError(domain: "OpenClickySystemAudioCapture", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "Screen Recording permission is required for system audio capture."
+            ])
+        }
+
         let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
         guard let display = content.displays.first else {
             throw NSError(domain: "OpenClickySystemAudioCapture", code: -1, userInfo: [
