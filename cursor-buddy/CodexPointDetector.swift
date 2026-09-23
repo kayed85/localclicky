@@ -209,8 +209,10 @@ final class CodexPointDetector {
         for imageURL in imageURLs {
             arguments.append(contentsOf: ["--image", imageURL.path])
         }
+        if !model.isEmpty && !["gpt-4o", "gpt-5.6-sol", "gemma"].contains(model) {
+            arguments.append(contentsOf: ["--model", model])
+        }
         arguments.append(contentsOf: [
-            "--model", model,
             // SECURITY: the point detector's only job is to read the screenshot
             // and return a `[POINT:x,y]` coordinate. It previously ran with
             // `--sandbox danger-full-access` + `--dangerously-bypass-approvals-

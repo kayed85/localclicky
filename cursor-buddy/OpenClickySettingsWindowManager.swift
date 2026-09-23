@@ -580,7 +580,7 @@ struct OpenClickySettingsView: View {
 
                 actionRow(title: "Check for Updates from GitHub (البحث عن تحديث جديد)", systemImageName: "arrow.clockwise") {
                     if let appDelegate = NSApp.delegate as? CompanionAppDelegate {
-                        appDelegate.checkForUpdates()
+                        appDelegate.triggerCheckForUpdates()
                     }
                 }
             }

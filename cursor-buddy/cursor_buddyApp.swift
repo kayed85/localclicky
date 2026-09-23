@@ -34,7 +34,7 @@ struct cursor_buddyApp: App {
                 .keyboardShortcut(",", modifiers: .command)
 
                 Button("Check for Updates…") {
-                    appDelegate.checkForUpdates()
+                    appDelegate.triggerCheckForUpdates()
                 }
             }
 
@@ -91,8 +91,10 @@ final class CompanionAppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDel
     private static let sparkleFeedOverrideDefaultsKey = "OpenClickySparkleFeedURLOverride"
     private var menuBarPanelManager: MenuBarPanelManager?
     private let companionManager = CompanionManager()
-    func checkForUpdates() {
-        sparkleUpdaterController?.checkForUpdates(nil)
+    private var sparkleUpdaterController: SPUStandardUpdaterController?
+
+    func triggerCheckForUpdates() {
+        sparkleUpdaterController?.checkForUpdates(self)
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
