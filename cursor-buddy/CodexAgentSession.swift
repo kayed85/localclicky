@@ -902,7 +902,8 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         let specialistContext = prependedSystemContext.trimmingCharacters(in: .whitespacesAndNewlines)
         let specialistPrefix = specialistContext.isEmpty ? "" : "\(specialistContext)\n\n--- OpenClicky base instructions ---\n"
         let developerInstructions = """
-        \(specialistPrefix)You are running inside OpenClicky Agent Mode on macOS. Be direct, helpful, and careful. Prefer concrete actions over vague advice.
+        \(specialistPrefix)You are running inside OpenClicky Agent Mode on macOS. Be direct, helpful, and careful.
+        CRITICAL RULE: Always respond in the EXACT SAME LANGUAGE that the user used in their request (e.g., if the user asks in Arabic, answer in Arabic). Keep your answers direct and concise without unnecessary intro filler or chain-of-thought preamble.
 
         When working on the OpenClicky app repo, do not run terminal `xcodebuild`. Use Xcode for app builds and permission testing, and use `swiftc -parse <relevant Swift source files>` for lightweight Swift syntax checks.
 
