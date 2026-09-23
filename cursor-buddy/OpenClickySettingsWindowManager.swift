@@ -1819,6 +1819,9 @@ struct OpenClickySettingsView: View {
                 actionRow(title: "Request System Events access", systemImageName: "gearshape.2") {
                     companionManager.requestSystemEventsAutomationPermission()
                 }
+                actionRow(title: "Reveal Background Helper App in Finder", systemImageName: "magnifyingglass") {
+                    companionManager.openBackgroundComputerUseHelperInFinder()
+                }
             }
 
             settingsGroup("If macOS shows access but OpenClicky does not") {

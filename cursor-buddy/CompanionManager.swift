@@ -1982,6 +1982,20 @@ final class CompanionManager: ObservableObject {
         NSWorkspace.shared.open(OpenClickyMacPrivacyPermissionProbe.automationSettingsURL)
     }
 
+    func openBackgroundComputerUseHelperInFinder() {
+        let fileManager = FileManager.default
+        let helperURLs = [
+            Bundle.main.resourceURL?.appendingPathComponent("OpenClicky/BackgroundComputerUseRuntime/BackgroundComputerUse.app"),
+            Bundle.main.resourceURL?.appendingPathComponent("BackgroundComputerUseRuntime/BackgroundComputerUse.app"),
+            fileManager.homeDirectoryForCurrentUser.appendingPathComponent("Applications/BackgroundComputerUse.app"),
+            URL(fileURLWithPath: "/Users/mk/Desktop/clicky-cua/Mac-Control-Ai/AppResources/OpenClicky/BackgroundComputerUseRuntime/BackgroundComputerUse.app")
+        ].compactMap { $0 }
+
+        if let existing = helperURLs.first(where: { fileManager.fileExists(atPath: $0.path) }) {
+            NSWorkspace.shared.activateFileViewerSelecting([existing])
+        }
+    }
+
     func requestRemindersAutomationPermission() {
         OpenClickyMessageLogStore.shared.append(
             lane: "computer-use",
