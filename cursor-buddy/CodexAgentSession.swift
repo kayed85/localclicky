@@ -435,7 +435,7 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         lastSubmittedPrompt
     }
     private var currentLeasePaths: [String] = []
-    private static let codexRuntimeCompatibilityFallbackModel = "gemma"
+    private static let codexRuntimeCompatibilityFallbackModel = "gpt-5.6-sol"
     private static let assistantDeltaFlushDelayNanoseconds: UInt64 = 180_000_000
 
     init(

@@ -42,15 +42,28 @@ struct ClickyCodexConfigTemplate: Equatable {
         self.preferAPIKeyAuthForDefaultOpenAI = preferAPIKeyAuthForDefaultOpenAI
     }
 
-    var openAICompatibleEndpoint: URL {
-        if workerBaseURL.lastPathComponent == "v1" {
-            return workerBaseURL
+    var isLocalModel: Bool {
+        let lower = model.lowercased()
+        return lower == "gemma" || lower == "apple-foundation" || lower == "ollama" || lower.contains("local")
+    }
+
+    var effectiveWorkerBaseURL: URL {
+        if isLocalModel && ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL) {
+            return ClickyCodexBackend.openClickyLocalModelBaseURL
         }
-        return workerBaseURL.appendingPathComponent("v1", isDirectory: false)
+        return workerBaseURL
+    }
+
+    var openAICompatibleEndpoint: URL {
+        let url = effectiveWorkerBaseURL
+        if url.lastPathComponent == "v1" {
+            return url
+        }
+        return url.appendingPathComponent("v1", isDirectory: false)
     }
 
     var modelProviderID: String {
-        ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL) ? Self.defaultModelProviderID : Self.customModelProviderID
+        ClickyCodexBackend.isDefaultOpenAIBaseURL(effectiveWorkerBaseURL) ? Self.defaultModelProviderID : Self.customModelProviderID
     }
 
     func render() -> String {
@@ -69,7 +82,7 @@ struct ClickyCodexConfigTemplate: Equatable {
             "enabled = false"
         ]
 
-        if !ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL) {
+        if !ClickyCodexBackend.isDefaultOpenAIBaseURL(effectiveWorkerBaseURL) {
             lines.append(contentsOf: [
                 "",
                 "[model_providers.\(Self.customModelProviderID)]",
@@ -143,7 +156,7 @@ struct ClickyCodexConfigTemplate: Equatable {
     }
 
     private var preferredAuthMethod: String {
-        guard ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL) else { return "apikey" }
+        guard ClickyCodexBackend.isDefaultOpenAIBaseURL(effectiveWorkerBaseURL) else { return "apikey" }
         return preferAPIKeyAuthForDefaultOpenAI ? "apikey" : "chatgpt"
     }
 
