@@ -757,13 +757,32 @@ final class CodexHomeManager {
     private static func sanitizeGlobalCodexCatalogFiles() {
         let homeDir = FileManager.default.homeDirectoryForCurrentUser
         let codexDir = homeDir.appendingPathComponent(".codex", isDirectory: true)
-        let jsonFiles = ["ollama-launch-models.json", "models_cache.json"]
-        for fileName in jsonFiles {
-            let fileURL = codexDir.appendingPathComponent(fileName, isDirectory: false)
-            if let content = try? String(contentsOf: fileURL, encoding: .utf8),
-               content.contains("\"effort\": \"max\"") {
-                let sanitized = content.replacingOccurrences(of: "\"effort\": \"max\"", with: "\"effort\": \"xhigh\"")
-                try? sanitized.write(to: fileURL, atomically: true, encoding: .utf8)
+        guard let files = try? FileManager.default.contentsOfDirectory(at: codexDir, includingPropertiesForKeys: nil) else { return }
+        for fileURL in files where fileURL.pathExtension.lowercased() == "json" {
+            guard var content = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
+            var modified = false
+            if content.contains("\"effort\": \"max\"") {
+                content = content.replacingOccurrences(of: "\"effort\": \"max\"", with: "\"effort\": \"xhigh\"")
+                modified = true
+            }
+            if let data = content.data(using: .utf8),
+               var jsonArray = (try? JSONSerialization.jsonObject(with: data)) as? [[String: Any]] {
+                var jsonArrayModified = false
+                for i in 0..<jsonArray.count {
+                    if jsonArray[i]["supports_reasoning_summaries"] == nil {
+                        jsonArray[i]["supports_reasoning_summaries"] = false
+                        jsonArrayModified = true
+                    }
+                }
+                if jsonArrayModified,
+                   let newData = try? JSONSerialization.data(withJSONObject: jsonArray, options: [.prettyPrinted]),
+                   let newContent = String(data: newData, encoding: .utf8) {
+                    content = newContent
+                    modified = true
+                }
+            }
+            if modified {
+                try? content.write(to: fileURL, atomically: true, encoding: .utf8)
             }
         }
     }
