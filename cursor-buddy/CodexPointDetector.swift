@@ -10,7 +10,7 @@ import CoreGraphics
 import Foundation
 
 final class CodexPointDetector {
-    private static let codexRuntimeCompatibilityFallbackModel = "gpt-5.6-luna"
+    private static let codexRuntimeCompatibilityFallbackModel = "gemma"
 
     private let model: String
     private let fileManager: FileManager
@@ -209,7 +209,7 @@ final class CodexPointDetector {
         for imageURL in imageURLs {
             arguments.append(contentsOf: ["--image", imageURL.path])
         }
-        if !model.isEmpty && !["gpt-4o", "gpt-5.6-sol", "gemma"].contains(model) {
+        if !model.isEmpty && !["gpt-4o", "gpt-5.6-sol"].contains(model) {
             arguments.append(contentsOf: ["--model", model])
         }
         arguments.append(contentsOf: [
