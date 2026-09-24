@@ -127,7 +127,7 @@ nonisolated enum OpenClickyModelCatalog {
         OpenClickyModelOption(id: "fable-5", label: "Fable 5", provider: .anthropic, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "sonnet-5", label: "Sonnet 5", provider: .anthropic, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "opus-5", label: "Opus 5", provider: .anthropic, maxOutputTokens: 128_000),
-        OpenClickyModelOption(id: "gpt-4o", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),
+        OpenClickyModelOption(id: "gpt-5.6-sol", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-terra", label: "GPT-5.6 Terra", provider: .openAI, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-luna", label: "GPT-5.6 Luna", provider: .openAI, maxOutputTokens: 128_000)
     ]
@@ -155,7 +155,7 @@ nonisolated enum OpenClickyModelCatalog {
         OpenClickyModelOption(id: "opus-5", label: "Opus 5", provider: .anthropic, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-realtime-2.1-mini", label: "GPT Realtime 2.1 mini", provider: .openAI, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-realtime-2.1", label: "GPT Realtime 2.1", provider: .openAI, maxOutputTokens: 128_000),
-        OpenClickyModelOption(id: "gpt-4o", label: "GPT-5.6 Sol", provider: .codex, maxOutputTokens: 128_000),
+        OpenClickyModelOption(id: "gpt-5.6-sol", label: "GPT-5.6 Sol", provider: .codex, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-terra", label: "GPT-5.6 Terra", provider: .codex, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-luna", label: "GPT-5.6 Luna", provider: .codex, maxOutputTokens: 128_000)
     ]
@@ -164,7 +164,7 @@ nonisolated enum OpenClickyModelCatalog {
         OpenClickyModelOption(id: "gemma", label: "Local Gemma 2 (On-Device)", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: appleFoundationModelID, label: "Apple On-Device", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "ollama", label: "Local Ollama / LM Studio", provider: .apple, maxOutputTokens: 64_000),
-        OpenClickyModelOption(id: "gpt-4o", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),
+        OpenClickyModelOption(id: "gpt-5.6-sol", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-terra", label: "GPT-5.6 Terra", provider: .openAI, maxOutputTokens: 128_000),
         OpenClickyModelOption(id: "gpt-5.6-luna", label: "GPT-5.6 Luna", provider: .openAI, maxOutputTokens: 128_000)
     ]
@@ -180,6 +180,8 @@ nonisolated enum OpenClickyModelCatalog {
         let trimmed = modelID.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return defaultVoiceResponseModelID }
         switch trimmed.lowercased() {
+        case "gpt-4o", "gpt-4o-mini", "gpt-4":
+            return defaultCodexActionsModelID
         case "gpt-realtime-2", "gpt-realtime-2.0", "gpt-realtime-2-mini":
             return defaultSpeechModelID
         case "claude-haiku-4-5", "claude-haiku-4-6", "haiku-5", "fable", "claude-fable-5":

@@ -1653,12 +1653,23 @@ final class CompanionManager: ObservableObject {
             compactedVoiceConversationArchive = restoredVoiceArchive
         }
 
+        if let legacyModel = UserDefaults.standard.string(forKey: "clickyCodexModel"),
+           legacyModel.lowercased().contains("gpt-4o") {
+            UserDefaults.standard.set("gemma", forKey: "clickyCodexModel")
+        }
+
         let initialAgentSession = CodexAgentSession(title: "Ask Agent", accentTheme: .blue)
         let restoredArchiveIDs = ChatWorkspaceArchiveStore.load()
         archivedSessionIDs = restoredArchiveIDs
         let restoredArchivedSessions = Self.restoredArchivedSessions(from: restoredArchiveIDs)
         let restoredInterruptedSessions = Self.restoredInterruptedSessions(archivedSessionIDs: restoredArchiveIDs)
-        codexAgentSessions = restoredInterruptedSessions + [initialAgentSession] + restoredArchivedSessions
+        let allSessions = restoredInterruptedSessions + [initialAgentSession] + restoredArchivedSessions
+        for session in allSessions {
+            if session.model.lowercased().contains("gpt-4o") {
+                session.model = "gemma"
+            }
+        }
+        codexAgentSessions = allSessions
         agentDockItems = Self.restoredInterruptedDockItems(from: restoredInterruptedSessions)
         activeCodexAgentSessionID = restoredInterruptedSessions.first?.id ?? initialAgentSession.id
         OpenClickyMessageLogStore.shared.append(

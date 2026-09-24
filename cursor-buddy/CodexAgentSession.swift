@@ -932,6 +932,10 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         \(ThreeDGenerationDispatcher.systemPromptInstruction)
         """
 
+        if model.lowercased().contains("gpt-4o") {
+            applyModel("gemma")
+        }
+
         let threadStart: [String: Any]
         do {
             threadStart = try await processManager.sendRequest(method: "thread/start", params: [
