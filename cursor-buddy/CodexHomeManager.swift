@@ -87,6 +87,7 @@ final class CodexHomeManager {
     }
 
     func prepare(bundle: Bundle = .main) throws -> CodexHomeLayout {
+        Self.sanitizeGlobalCodexCatalogFiles()
         let home = codexHomeDirectory
         try fileManager.createDirectory(at: home, withIntermediateDirectories: true)
         try fileManager.createDirectory(at: home.appendingPathComponent("sessions", isDirectory: true), withIntermediateDirectories: true)
@@ -751,5 +752,19 @@ final class CodexHomeManager {
         return base
             .appendingPathComponent("OpenClicky", isDirectory: true)
             .appendingPathComponent("AgentMode", isDirectory: true)
+    }
+
+    private static func sanitizeGlobalCodexCatalogFiles() {
+        let homeDir = FileManager.default.homeDirectoryForCurrentUser
+        let codexDir = homeDir.appendingPathComponent(".codex", isDirectory: true)
+        let jsonFiles = ["ollama-launch-models.json", "models_cache.json"]
+        for fileName in jsonFiles {
+            let fileURL = codexDir.appendingPathComponent(fileName, isDirectory: false)
+            if let content = try? String(contentsOf: fileURL, encoding: .utf8),
+               content.contains("\"effort\": \"max\"") {
+                let sanitized = content.replacingOccurrences(of: "\"effort\": \"max\"", with: "\"effort\": \"xhigh\"")
+                try? sanitized.write(to: fileURL, atomically: true, encoding: .utf8)
+            }
+        }
     }
 }
