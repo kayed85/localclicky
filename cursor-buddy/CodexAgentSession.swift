@@ -637,6 +637,9 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         let sessionID = id
         promptStartTask = Task { [weak self] in
             guard let self else { return }
+            if self.homeManager.isLocalModel && self.tryExecuteFastLocalMediaIntent(prompt: prompt) {
+                return
+            }
             do {
                 let coordinationNote = try await self.buildAgentCoordinationNote(for: prompt)
                 try self.requireCurrentRun(generation)
@@ -805,8 +808,9 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         }
 
         if homeManager.isLocalModel {
+            let userPrompt = Self.extractUserInstruction(from: prompt)
             let localBrief = """
-            User request: \(prompt)
+            User request: \(userPrompt)
 
             CRITICAL EXECUTION RULES:
             1. You are running locally on macOS. You have direct control over the computer via `cuaDriver` MCP tools and terminal execution.
@@ -815,8 +819,7 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
                For YouTube: `open "https://www.youtube.com/results?search_query=..."`
             3. Do NOT output hypothetical JSON or plain text explanations. Perform the action now.
             4. Answer in Arabic if the user asks in Arabic.
-            5. Keep your final response short (1 sentence) and end with:
-            TASK_TITLE: \(prompt.prefix(30))
+            5. Keep your final response short (1 sentence).
             """
             guard let context = screenContext, !context.isEmpty else {
                 return localBrief
@@ -1737,6 +1740,72 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
             "update the note"
         ]
         return noteIntentPhrases.contains { requestText.contains($0) }
+    }
+
+    static func extractUserInstruction(from prompt: String) -> String {
+        if let range = prompt.range(of: "User instruction:") {
+            return String(prompt[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    func tryExecuteFastLocalMediaIntent(prompt: String) -> Bool {
+        let clean = Self.extractUserInstruction(from: prompt)
+        let lower = clean.lowercased()
+
+        let isYouTube = lower.contains("يوتيوب") || lower.contains("youtube")
+        let isPlay = lower.contains("شغل") || lower.contains("اسمع") || lower.contains("play") || lower.contains("open") || lower.contains("افتح")
+
+        guard isYouTube || (isPlay && (lower.contains("اغنية") || lower.contains("أغنية") || lower.contains("فيديو") || lower.contains("حلقة") || lower.contains("حلقه"))) else {
+            return false
+        }
+
+        var s = clean
+        let dropPatterns = [
+            "^(افتح\\s+)?(على\\s+)?(ال)?يوتيوب\\s+(على\\s+)?",
+            "^(و)?(شغل|اسمع|افتح)\\s+",
+            "\\s+(و)?(شغل|اسمع)(ها|ه|هم)?$"
+        ]
+        for pattern in dropPatterns {
+            s = s.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
+        }
+        let finalQuery = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !finalQuery.isEmpty else { return false }
+
+        let encoded = finalQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? finalQuery
+        guard let searchURL = URL(string: "https://www.youtube.com/results?search_query=\(encoded)") else { return false }
+
+        appendActivityStatusLine("جاري البحث وتشغيل: \(finalQuery)")
+
+        var req = URLRequest(url: searchURL)
+        req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", forHTTPHeaderField: "User-Agent")
+
+        URLSession.shared.dataTask(with: req) { [weak self] data, _, _ in
+            var targetURL = searchURL
+            if let data = data,
+               let html = String(data: data, encoding: .utf8) {
+                if let match = html.range(of: "\"videoId\":\"([^\"]+)\"", options: .regularExpression) {
+                    let sub = String(html[match])
+                    let vid = sub.replacingOccurrences(of: "\"videoId\":\"", with: "").replacingOccurrences(of: "\"", with: "")
+                    if !vid.isEmpty, let watchURL = URL(string: "https://www.youtube.com/watch?v=\(vid)") {
+                        targetURL = watchURL
+                    }
+                }
+            }
+
+            DispatchQueue.main.async {
+                NSWorkspace.shared.open(targetURL)
+                guard let self = self else { return }
+                let responseText = "تم تشغيل: \(finalQuery) على يوتيوب بنجاح."
+                self.appendActivityStatusLine("تم التشغيل")
+                self.upsertEntry(id: UUID().uuidString, role: .assistant, text: responseText)
+                self.latestAssistantResponseForCompletedTurn = responseText
+                self.status = .ready
+                self.progressStage = .idle
+            }
+        }.resume()
+
+        return true
     }
 
     private static func userFacingAgentMessage(from text: String) -> String {
