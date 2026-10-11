@@ -809,17 +809,45 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
 
         if homeManager.isLocalModel {
             let userPrompt = Self.extractUserInstruction(from: prompt)
+            let lowerPrompt = userPrompt.lowercased()
+            let isBrowserSummary = lowerPrompt.contains("browser") || lowerPrompt.contains("متصفح") || lowerPrompt.contains("صفحة") || lowerPrompt.contains("summarize") || lowerPrompt.contains("لخص")
+
+            var browserContextText = ""
+            if isBrowserSummary, let browserInfo = Self.activeBrowserContext() {
+                browserContextText = """
+
+                CURRENT ACTIVE BROWSER DETAILS:
+                - Browser App: \(browserInfo.browser)
+                - Active Tab Title: \(browserInfo.title)
+                - Active Tab URL: \(browserInfo.url)
+                - Page Content / Details: \(browserInfo.content)
+                """
+            }
+
+            var visionContextText = ""
+            if let context = screenContext, let firstImage = context.attachments.first?.fileURL {
+                if let visualDescription = Self.describeScreenshotLocallyWithVision(fileURL: firstImage) {
+                    visionContextText = """
+
+                    SCREEN VISUAL DESCRIPTION (From Local Vision Model):
+                    \(visualDescription)
+                    """
+                }
+            }
+
             let localBrief = """
             User request: \(userPrompt)
+            \(browserContextText)
+            \(visionContextText)
 
             CRITICAL EXECUTION RULES:
             1. You are running locally on macOS. You have direct control over the computer via `cuaDriver` MCP tools and terminal execution.
             2. When asked to open YouTube, open a website, play songs/media, open apps, click, or type:
                DO IT IMMEDIATELY! Use `cuaDriver` tools or run terminal commands directly:
                For YouTube: `open "https://www.youtube.com/results?search_query=..."`
-            3. Do NOT output hypothetical JSON or plain text explanations. Perform the action now.
+            3. When asked to summarize a browser page or screen, use the BROWSER and SCREEN VISUAL DETAILS provided above directly. Do NOT call `web_search` or output JSON tool names.
             4. Answer in Arabic if the user asks in Arabic.
-            5. Keep your final response short (1 sentence).
+            5. Keep your final response clear and concise (2-3 sentences).
             """
             guard let context = screenContext, !context.isEmpty else {
                 return localBrief
@@ -1740,6 +1768,98 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
             "update the note"
         ]
         return noteIntentPhrases.contains { requestText.contains($0) }
+    }
+
+    static func activeBrowserContext() -> (title: String, url: String, browser: String, content: String)? {
+        let script = """
+        tell application "System Events"
+            set procNames to name of every process whose background only is false
+        end tell
+        if procNames contains "Brave Browser" then
+            tell application "Brave Browser"
+                if (count of windows) > 0 then
+                    set t to active tab of window 1
+                    return "Brave Browser|||" & (title of t) & "|||" & (URL of t)
+                end if
+            end tell
+        else if procNames contains "Google Chrome" then
+            tell application "Google Chrome"
+                if (count of windows) > 0 then
+                    set t to active tab of window 1
+                    return "Google Chrome|||" & (title of t) & "|||" & (URL of t)
+                end if
+            end tell
+        else if procNames contains "Safari" then
+            tell application "Safari"
+                if (count of windows) > 0 then
+                    set t to current tab of window 1
+                    return "Safari|||" & (name of t) & "|||" & (URL of t)
+                end if
+            end tell
+        end if
+        return ""
+        """
+        var error: NSDictionary?
+        guard let appleScript = NSAppleScript(source: script) else { return nil }
+        let output = appleScript.executeAndReturnError(&error).stringValue ?? ""
+        let parts = output.components(separatedBy: "|||")
+        guard parts.count >= 3 else { return nil }
+        let browser = parts[0]
+        let title = parts[1]
+        let pageURL = parts[2]
+
+        var content = title
+        if let url = URL(string: pageURL) {
+            var req = URLRequest(url: url)
+            req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", forHTTPHeaderField: "User-Agent")
+            let sem = DispatchSemaphore(value: 0)
+            URLSession.shared.dataTask(with: req) { data, _, _ in
+                defer { sem.signal() }
+                if let data = data, let html = String(data: data, encoding: .utf8) {
+                    if let range = html.range(of: "\"shortDescription\":\"([^\"]+)\"", options: .regularExpression) {
+                        let sub = String(html[range]).replacingOccurrences(of: "\"shortDescription\":\"", with: "").replacingOccurrences(of: "\"", with: "")
+                        content += " - " + sub.prefix(500)
+                    } else if let range = html.range(of: "<meta name=\"description\" content=\"([^\"]+)\"", options: .regularExpression) {
+                        let sub = String(html[range]).replacingOccurrences(of: "<meta name=\"description\" content=\"", with: "").replacingOccurrences(of: "\"", with: "")
+                        content += " - " + sub.prefix(500)
+                    }
+                }
+            }.resume()
+            _ = sem.wait(timeout: .now() + 2)
+        }
+
+        return (title: title, url: pageURL, browser: browser, content: content)
+    }
+
+    static func describeScreenshotLocallyWithVision(fileURL: URL) -> String? {
+        guard let imageData = try? Data(contentsOf: fileURL) else { return nil }
+        let b64 = imageData.base64EncodedString()
+        let payload: [String: Any] = [
+            "model": "gemma4:e2b",
+            "prompt": "Describe what is visible on this screen in 2 concise sentences, focusing on key content, text, and active windows.",
+            "images": [b64],
+            "stream": false
+        ]
+        guard let jsonBytes = try? JSONSerialization.data(withJSONObject: payload),
+              let url = URL(string: "http://127.0.0.1:11434/api/generate") else { return nil }
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = jsonBytes
+        req.timeoutInterval = 15
+
+        let sem = DispatchSemaphore(value: 0)
+        var resultDescription: String? = nil
+        URLSession.shared.dataTask(with: req) { data, _, _ in
+            defer { sem.signal() }
+            if let data = data,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let resp = json["response"] as? String {
+                resultDescription = resp.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }.resume()
+        _ = sem.wait(timeout: .now() + 15)
+        return resultDescription
     }
 
     static func extractUserInstruction(from prompt: String) -> String {
