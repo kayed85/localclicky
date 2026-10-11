@@ -182,11 +182,14 @@ struct ClickyCodexConfigTemplate: Equatable {
 
 nonisolated enum CuaDriverMCPConfiguration {
     static let environmentOverrideKey = "OPENCLICKY_CUA_DRIVER_MCP_COMMAND"
-    static let knownCommandPaths = [
-        "/Applications/CuaDriver.app/Contents/MacOS/cua-driver",
-        "/usr/local/bin/cua-driver",
-        "/opt/homebrew/bin/cua-driver"
-    ]
+    static var knownCommandPaths: [String] {
+        [
+            "/Applications/CuaDriver.app/Contents/MacOS/cua-driver",
+            FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/bin/cua-driver").path,
+            "/usr/local/bin/cua-driver",
+            "/opt/homebrew/bin/cua-driver"
+        ]
+    }
 
     static func resolvedCommandPath(
         fileManager: FileManager = .default,
