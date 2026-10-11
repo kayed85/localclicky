@@ -804,6 +804,30 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
             coordinationSection = ""
         }
 
+        if homeManager.isLocalModel {
+            let localBrief = """
+            User request: \(prompt)
+
+            CRITICAL EXECUTION RULES:
+            1. You are running locally on macOS. You have direct control over the computer via `cuaDriver` MCP tools and terminal execution.
+            2. When asked to open YouTube, open a website, play songs/media, open apps, click, or type:
+               DO IT IMMEDIATELY! Use `cuaDriver` tools or run terminal commands directly:
+               For YouTube: `open "https://www.youtube.com/results?search_query=..."`
+            3. Do NOT output hypothetical JSON or plain text explanations. Perform the action now.
+            4. Answer in Arabic if the user asks in Arabic.
+            5. Keep your final response short (1 sentence) and end with:
+            TASK_TITLE: \(prompt.prefix(30))
+            """
+            guard let context = screenContext, !context.isEmpty else {
+                return localBrief
+            }
+            return """
+            \(context.promptPrefix())
+
+            \(localBrief)
+            """
+        }
+
         let taskBrief = """
         OpenClicky Agent Mode brief:
         - User request: \(prompt)
