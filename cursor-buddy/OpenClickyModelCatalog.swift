@@ -96,7 +96,7 @@ nonisolated enum OpenClickyModelCatalog {
     /// background work to the configured Codex model.
     static let defaultVoiceResponseModelID = defaultSpeechModelID
     static let defaultAnthropicResponseModelID = "fable-5"
-    static let defaultCodexActionsModelID = "gemma"
+    static let defaultCodexActionsModelID = "qwen2.5-coder:7b"
     /// On-device Apple Foundation Models (macOS 26+ / Apple Intelligence).
     static let appleFoundationModelID = "apple-foundation"
     /// Text/vision model used when a live speech model needs screenshots,
@@ -161,8 +161,8 @@ nonisolated enum OpenClickyModelCatalog {
     ]
 
     static let codexActionsModels: [OpenClickyModelOption] = [
+        OpenClickyModelOption(id: "qwen2.5-coder:7b", label: "Local Qwen 2.5 Coder 7B (Fast)", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "gemma", label: "Local Gemma 2 (On-Device)", provider: .apple, maxOutputTokens: 64_000),
-        OpenClickyModelOption(id: "qwen2.5-coder:7b", label: "Local Qwen 2.5 Coder 7B", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: appleFoundationModelID, label: "Apple On-Device", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "ollama", label: "Local Ollama / LM Studio", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "gpt-5.6-sol", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),

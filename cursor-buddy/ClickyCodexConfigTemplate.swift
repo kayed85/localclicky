@@ -139,18 +139,20 @@ struct ClickyCodexConfigTemplate: Equatable {
             ])
         }
 
-        lines.append(contentsOf: [
-            "",
-            "[[skills.config]]",
-            "model_instructions_file = \"\(escape(modelInstructionsFileName))\"",
-            "bundled_skills_dir = \"\(escape(bundledSkillsDirectoryName))\"",
-            "enabled = true",
-            "",
-            "[[skills.config]]",
-            "model_instructions_file = \"\(escape(modelInstructionsFileName))\"",
-            "bundled_skills_dir = \"\(escape(learnedSkillsDirectoryName))\"",
-            "enabled = true"
-        ])
+        if !isLocalModel {
+            lines.append(contentsOf: [
+                "",
+                "[[skills.config]]",
+                "model_instructions_file = \"\(escape(modelInstructionsFileName))\"",
+                "bundled_skills_dir = \"\(escape(bundledSkillsDirectoryName))\"",
+                "enabled = true",
+                "",
+                "[[skills.config]]",
+                "model_instructions_file = \"\(escape(modelInstructionsFileName))\"",
+                "bundled_skills_dir = \"\(escape(learnedSkillsDirectoryName))\"",
+                "enabled = true"
+            ])
+        }
 
         return lines.joined(separator: "\n") + "\n"
     }

@@ -935,8 +935,30 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         \(ThreeDGenerationDispatcher.systemPromptInstruction)
         """
 
-        if model.lowercased().contains("gpt-4o") {
-            applyModel("gemma")
+        let isLocal = homeManager.isLocalModel
+        let effectiveBaseInstructions: String
+        let effectiveDeveloperInstructions: String
+
+        if isLocal {
+            effectiveBaseInstructions = """
+            You are OpenClicky Agent Mode running locally on macOS.
+            You directly control the computer, browse the web, open apps, click, type, and automate user requests.
+            CRITICAL RULES:
+            1. Always respond in the EXACT SAME LANGUAGE as the user (Arabic if the user asks in Arabic).
+            2. When the user asks to open an app or website (e.g., YouTube, Google, Spotify), play media, search, or click: DO IT IMMEDIATELY using `cuaDriver` MCP tools or shell commands (e.g. `open "https://www.youtube.com/results?search_query=..."` or `open -a "Google Chrome"`).
+            3. Do NOT just acknowledge or describe instructions. Execute the required actions now.
+            4. Keep all responses brief and natural (1-2 sentences).
+            """
+            effectiveDeveloperInstructions = """
+            You are running in OpenClicky Agent Mode locally on macOS.
+            Direct computer control via `cuaDriver` MCP and terminal commands is enabled.
+            When asked to open YouTube, a website, or play songs:
+            - Execute the command immediately: e.g. run `open "https://www.youtube.com/results?search_query=..."` or use `cuaDriver` to control the browser and play.
+            - Answer the user concisely in their language after performing the action.
+            """
+        } else {
+            effectiveBaseInstructions = baseInstructions
+            effectiveDeveloperInstructions = developerInstructions
         }
 
         let threadStart: [String: Any]
@@ -949,8 +971,8 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
                 "sandbox": executionSandboxMode,
                 "config": [:],
                 "serviceName": "OpenClicky",
-                "baseInstructions": baseInstructions,
-                "developerInstructions": developerInstructions,
+                "baseInstructions": effectiveBaseInstructions,
+                "developerInstructions": effectiveDeveloperInstructions,
                 "personality": "friendly",
                 "ephemeral": false,
                 "sessionStartSource": "startup"
