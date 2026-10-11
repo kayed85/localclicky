@@ -44,7 +44,7 @@ struct ClickyCodexConfigTemplate: Equatable {
 
     var isLocalModel: Bool {
         let lower = model.lowercased()
-        return lower == "gemma" || lower == "apple-foundation" || lower == "ollama" || lower.contains("local")
+        return lower == "gemma" || lower.hasPrefix("gemma") || lower == "apple-foundation" || lower == "ollama" || lower.contains("local") || lower.contains("qwen") || lower.contains("llama")
     }
 
     var effectiveWorkerBaseURL: URL {
@@ -242,7 +242,7 @@ nonisolated enum CuaDriverMCPConfiguration {
 
 enum ClickyCodexBackend {
     static let defaultOpenAIBaseURL = URL(string: "https://api.openai.com/v1")!
-    static let openClickyLocalModelBaseURL = URL(string: "http://127.0.0.1:32124")!
+    static let openClickyLocalModelBaseURL = URL(string: "http://127.0.0.1:11434")!
 
     static func configuredWorkerBaseURL() -> URL {
         if let raw = ProcessInfo.processInfo.environment["CLICKY_AGENT_BASE_URL"],

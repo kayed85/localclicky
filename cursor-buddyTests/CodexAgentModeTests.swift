@@ -108,7 +108,7 @@ struct CodexAgentModeTests {
         let rendered = template.render()
 
         #expect(rendered.contains("model_provider = \"openclicky\""))
-        #expect(rendered.contains("base_url = \"http://127.0.0.1:32124/v1\""))
+        #expect(rendered.contains("base_url = \"http://127.0.0.1:11434/v1\""))
         #expect(rendered.contains("wire_api = \"responses\""))
         #expect(!rendered.contains("wire_api = \"chat\""))
     }

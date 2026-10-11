@@ -864,6 +864,9 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         }
 
         status = .starting
+        if model.lowercased().contains("gpt-4o") {
+            applyModel("gemma")
+        }
         let processManager = self.processManager
         let applicationSupportDirectory = homeManager.applicationSupportDirectory
         let workerBaseURL = homeManager.workerBaseURL
@@ -940,7 +943,7 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         do {
             threadStart = try await processManager.sendRequest(method: "thread/start", params: [
                 "model": model,
-                "modelProvider": modelProviderID,
+                "modelProvider": homeManager.modelProviderID,
                 "cwd": workingDirectoryPath,
                 "approvalPolicy": executionApprovalPolicy,
                 "sandbox": executionSandboxMode,

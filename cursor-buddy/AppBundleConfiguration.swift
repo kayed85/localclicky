@@ -191,7 +191,7 @@ nonisolated enum AppBundleConfiguration {
     }
 
     static func mcpComputerUseEnabled() -> Bool {
-        userDefaultsBool(forKey: userMCPComputerUseEnabledDefaultsKey, defaultValue: false)
+        userDefaultsBool(forKey: userMCPComputerUseEnabledDefaultsKey, defaultValue: true)
     }
 
     static func mcpCuaDriverCommand() -> String? {

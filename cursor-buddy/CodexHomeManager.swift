@@ -80,8 +80,19 @@ final class CodexHomeManager {
         codexHomeDirectory.appendingPathComponent(soulFileName, isDirectory: false)
     }
 
+    var isLocalModel: Bool {
+        ClickyCodexConfigTemplate(model: model).isLocalModel
+    }
+
+    var effectiveWorkerBaseURL: URL {
+        if isLocalModel && ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL) {
+            return ClickyCodexBackend.openClickyLocalModelBaseURL
+        }
+        return workerBaseURL
+    }
+
     var modelProviderID: String {
-        ClickyCodexBackend.isDefaultOpenAIBaseURL(workerBaseURL)
+        ClickyCodexBackend.isDefaultOpenAIBaseURL(effectiveWorkerBaseURL)
             ? ClickyCodexConfigTemplate.defaultModelProviderID
             : ClickyCodexConfigTemplate.customModelProviderID
     }

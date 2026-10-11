@@ -162,6 +162,7 @@ nonisolated enum OpenClickyModelCatalog {
 
     static let codexActionsModels: [OpenClickyModelOption] = [
         OpenClickyModelOption(id: "gemma", label: "Local Gemma 2 (On-Device)", provider: .apple, maxOutputTokens: 64_000),
+        OpenClickyModelOption(id: "qwen2.5-coder:7b", label: "Local Qwen 2.5 Coder 7B", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: appleFoundationModelID, label: "Apple On-Device", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "ollama", label: "Local Ollama / LM Studio", provider: .apple, maxOutputTokens: 64_000),
         OpenClickyModelOption(id: "gpt-5.6-sol", label: "GPT-5.6 Sol", provider: .openAI, maxOutputTokens: 128_000),
@@ -194,6 +195,8 @@ nonisolated enum OpenClickyModelCatalog {
             return defaultCodexActionsModelID
         case "gpt-5.4-mini":
             return "gpt-5.6-luna"
+        case "gemma4:e2b", "gemma-2", "gemma2":
+            return "gemma"
         default:
             return trimmed
         }
