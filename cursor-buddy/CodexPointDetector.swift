@@ -281,10 +281,13 @@ final class CodexPointDetector {
             codexHome: codexHome,
             runtimeExecutableURL: runtimeExecutableURL
         )
-        if environment["OPENAI_API_KEY"]?.isEmpty != false,
-           let configuredAPIKey = AppBundleConfiguration.openAIAPIKey(),
-           !configuredAPIKey.isEmpty {
-            environment["OPENAI_API_KEY"] = configuredAPIKey
+        if environment["OPENAI_API_KEY"]?.isEmpty != false {
+            if let configuredAPIKey = AppBundleConfiguration.openAIAPIKey(),
+               !configuredAPIKey.isEmpty {
+                environment["OPENAI_API_KEY"] = configuredAPIKey
+            } else {
+                environment["OPENAI_API_KEY"] = "ollama-local"
+            }
         }
         return try await CodexProcessManager.runOneShotProcess(
             executableURL: executableURL,

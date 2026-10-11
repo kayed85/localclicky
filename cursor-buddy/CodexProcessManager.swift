@@ -55,6 +55,10 @@ nonisolated final class CodexProcessManager: @unchecked Sendable {
             environment["OPENAI_API_KEY"] = configuredAPIKey
         } else if prefersChatGPTAuth {
             environment.removeValue(forKey: "OPENAI_API_KEY")
+        } else {
+            // For local / custom OpenAI-compatible providers like Ollama,
+            // Codex requires env_key to exist in the environment.
+            environment["OPENAI_API_KEY"] = "ollama-local"
         }
 
         process.environment = environment
