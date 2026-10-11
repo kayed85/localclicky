@@ -82,6 +82,18 @@ struct ClickyCodexConfigTemplate: Equatable {
             "enabled = false"
         ]
 
+        if isLocalModel {
+            lines.append(contentsOf: [
+                "",
+                "[features]",
+                "skills = false",
+                "plugins = false",
+                "apps = false",
+                "web_search = false",
+                "memories = false"
+            ])
+        }
+
         if !ClickyCodexBackend.isDefaultOpenAIBaseURL(effectiveWorkerBaseURL) {
             lines.append(contentsOf: [
                 "",

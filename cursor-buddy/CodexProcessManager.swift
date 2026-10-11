@@ -27,28 +27,32 @@ nonisolated final class CodexProcessManager: @unchecked Sendable {
         let errorPipe = Pipe()
 
         process.executableURL = executableURL
-        process.arguments = [
+        var arguments = [
             "app-server",
             "--listen", "stdio://",
-            // Safer seed defaults for the app-server. These are overridden by
-            // every caller's per-turn `turn/start` params: Agent Mode (a
-            // user-directed coding agent) explicitly requests
-            // `danger-full-access` per-turn where the user wants full power; the
-            // voice session and point detector request `workspace-write`.
-            // Defaulting the seed to `workspace-write` means any future caller
-            // that forgets to set a sandbox gets the confined one, not the whole
-            // volume.
             "-c", "approval_policy=\"never\"",
             "-c", "sandbox_mode=\"workspace-write\""
         ]
+
+        let configFile = codexHome.appendingPathComponent("config.toml", isDirectory: false)
+        let configText = (try? String(contentsOf: configFile, encoding: .utf8)) ?? ""
+        let isLocal = configText.contains("base_url = \"http://127.0.0.1:11434") || configText.contains("model = \"qwen") || configText.contains("model = \"gemma")
+        if isLocal {
+            arguments.append(contentsOf: [
+                "-c", "features.skills=false",
+                "-c", "features.plugins=false",
+                "-c", "features.apps=false",
+                "-c", "features.web_search=false",
+                "-c", "features.memories=false"
+            ])
+        }
+        process.arguments = arguments
         process.standardInput = inputPipe
         process.standardOutput = outputPipe
         process.standardError = errorPipe
 
         var environment = Self.baseEnvironment(codexHome: codexHome, runtimeExecutableURL: executableURL)
 
-        let configFile = codexHome.appendingPathComponent("config.toml", isDirectory: false)
-        let configText = (try? String(contentsOf: configFile, encoding: .utf8)) ?? ""
         let prefersChatGPTAuth = configText.contains("preferred_auth_method = \"chatgpt\"")
         if let configuredAPIKey = AppBundleConfiguration.openAIAPIKey(),
            !configuredAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

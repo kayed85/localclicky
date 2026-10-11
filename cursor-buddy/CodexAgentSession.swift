@@ -1323,6 +1323,9 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
                     if let fileURL = Self.firstOpenableFileURL(in: visibleText) {
                         onOpenableFileFound?(fileURL)
                     }
+                    if Self.executeActionableContentIfNeeded(in: visibleText) {
+                        appendActivityStatusLine("Opened requested action on Mac")
+                    }
                 }
             }
             currentAssistantEntryID = nil
@@ -1741,8 +1744,95 @@ final class CodexAgentSession: ObservableObject, Identifiable, BrowserWorkspaceA
         if let fileURL = firstOpenableFileURL(in: visibleText) {
             return "Found \(genericArtifactLabel(for: fileURL)). Showing it now."
         }
+        let trimmed = visibleText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("open ") || trimmed.contains("youtube.com") || trimmed.contains("youtu.be") {
+            return "تم فتح الرابط وتشغيل المطلوب في المتصفح."
+        }
 
         return visibleText
+    }
+
+    @discardableResult
+    private static func executeActionableContentIfNeeded(in text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+
+        func openURLOrDirectVideo(_ rawURLStr: String) {
+            let clean = rawURLStr.trimmingCharacters(in: CharacterSet(charactersIn: "\"\'`"))
+            let encoded = clean.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? clean
+            guard let url = URL(string: encoded) else { return }
+
+            if url.host?.contains("youtube.com") == true && url.path.contains("results") {
+                var req = URLRequest(url: url)
+                req.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", forHTTPHeaderField: "User-Agent")
+                URLSession.shared.dataTask(with: req) { data, _, _ in
+                    if let data = data,
+                       let html = String(data: data, encoding: .utf8),
+                       let range = html.range(of: "\"videoId\":\"") {
+                        let videoId = String(html[range.upperBound...].prefix(11))
+                        if !videoId.isEmpty && !videoId.contains("\""),
+                           let watchURL = URL(string: "https://www.youtube.com/watch?v=\(videoId)") {
+                            DispatchQueue.main.async {
+                                NSWorkspace.shared.open(watchURL)
+                            }
+                            return
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        NSWorkspace.shared.open(url)
+                    }
+                }.resume()
+                return
+            }
+
+            DispatchQueue.main.async {
+                NSWorkspace.shared.open(url)
+            }
+        }
+
+        if trimmed.hasPrefix("open ") {
+            let remainder = trimmed.dropFirst(5).trimmingCharacters(in: .whitespacesAndNewlines)
+            let unquoted = remainder.trimmingCharacters(in: CharacterSet(charactersIn: "\"\'`"))
+            if unquoted.hasPrefix("http://") || unquoted.hasPrefix("https://") {
+                openURLOrDirectVideo(unquoted)
+                return true
+            } else if !unquoted.isEmpty {
+                let proc = Process()
+                proc.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+                proc.arguments = [unquoted]
+                try? proc.run()
+                return true
+            }
+        }
+
+        if (trimmed.hasPrefix("{") && trimmed.hasSuffix("}")) || trimmed.contains("\"command\"") || trimmed.contains("\"arguments\"") {
+            if let data = trimmed.data(using: .utf8),
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                if let args = json["arguments"] as? [String: Any] {
+                    if let cmd = args["command"] as? String {
+                        return executeActionableContentIfNeeded(in: cmd)
+                    }
+                    if let urlStr = (args["url"] as? String) ?? (args["query"] as? String) ?? (args["q"] as? String) {
+                        return executeActionableContentIfNeeded(in: "open \(urlStr)")
+                    }
+                }
+                if let cmd = json["command"] as? String {
+                    return executeActionableContentIfNeeded(in: cmd)
+                }
+            }
+        }
+
+        if let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) {
+            let matches = detector.matches(in: trimmed, options: [], range: NSRange(location: 0, length: trimmed.utf16.count))
+            if let firstMatch = matches.first, let url = firstMatch.url {
+                if trimmed.count < 300 || trimmed.contains("youtube") {
+                    openURLOrDirectVideo(url.absoluteString)
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     private static func genericArtifactLabel(for fileURL: URL) -> String {
